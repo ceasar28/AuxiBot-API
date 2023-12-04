@@ -9,6 +9,7 @@
     "lib": ["esnext"],
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "module": "CommonJS"
+    "module": "CommonJS",
+    "types": []
   }
 }
