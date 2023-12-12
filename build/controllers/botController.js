@@ -11,6 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.prompt = void 0;
 const chatbot_1 = require("../config/chatbot");
+const Palm_API_Key = process.env.PALM_API;
+console.log(Palm_API_Key);
 const prompt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { query } = req.body;
     const prompt = yield (0, chatbot_1.textQuery)(query);
