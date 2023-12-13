@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.prompt = void 0;
+exports.palmPrompt = exports.prompt = void 0;
 const chatbot_1 = require("../config/chatbot");
 const Palm_API_Key = process.env.PALM_API;
-console.log(Palm_API_Key);
+const language_model_Url = `https://generativelanguage.googleapis.com/v1beta2/models/chat-bison-001:generateMessage?key=${Palm_API_Key}`;
 const prompt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { query } = req.body;
     const prompt = yield (0, chatbot_1.textQuery)(query);
@@ -20,4 +20,22 @@ const prompt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json({ prompt, message: "hello, this is a prompt Bot endpoint" });
 });
 exports.prompt = prompt;
+const palmPrompt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { query } = req.body;
+    const payload = {
+        prompt: { messages: [{ content: query }] },
+        temperature: 0.1,
+        candidateCount: 1,
+    };
+    const response = yield fetch(language_model_Url, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        method: "POST",
+    });
+    const data = yield response.json();
+    res.json({ data, message: "hello, this is a Palm prompt Bot endpoint" });
+});
+exports.palmPrompt = palmPrompt;
 //# sourceMappingURL=botController.js.map

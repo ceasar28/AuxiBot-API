@@ -8,5 +8,6 @@ const botController_1 = require("../controllers/botController");
 const router = express_1.default.Router();
 // Define a test endpoint
 router.post("/", botController_1.prompt);
+router.post("/palm", botController_1.palmPrompt);
 exports.default = router;
 //# sourceMappingURL=botRoute.js.map
