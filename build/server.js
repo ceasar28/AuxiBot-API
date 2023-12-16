@@ -17,6 +17,9 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 // router Middleware
 app.use("/api/bot", botRoute_1.default);
+app.use("/", (req, res) => {
+    res.send("ping");
+});
 app.listen(PORT, () => {
     console.log(`Server is up and running on ${PORT}`);
 });
