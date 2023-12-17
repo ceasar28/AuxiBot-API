@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import EventModel from "../models/event.model";
+import schedule from 'node-schedule';
 import * as yup from "yup"
+import sendEmail from "../utils/sendEmails.utils";
 
 export default class EventController {
     async createEvent(req: Request, res: Response) {
@@ -39,8 +41,26 @@ export default class EventController {
         const dateParts = req.body.date.split(' - ');
         const formattedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
         const dateTime = new Date(`${formattedDate}T${req.body.time}:00.000Z`);
+        const {email, title, date, time} = req.body;
         req.body.time = dateTime;
         const createdEvent = await EventModel.create(req.body);
+
+        const emailJob1 = schedule.scheduleJob((dateTime.getTime() - 86400000), async function () {
+            try {
+                await sendEmail(email, "a day", title, date, time);
+                console.log('Email for one day before sent successfully');
+            } catch (error) {
+                console.error('Error sending email:', error);
+            }
+        });    
+        const emailJob2 = schedule.scheduleJob((dateTime.getTime() - 3600000), async function () {
+            try {
+                await sendEmail(email, "one hour", title, date, time);
+                console.log('Email for one hour before sent successfully');
+            } catch (error) {
+                console.error('Error sending email:', error);
+            }
+        });    
         const event = await EventModel.findOne({ _id: createdEvent.id}, "-__v");
         return res.status(201)
         .send({
