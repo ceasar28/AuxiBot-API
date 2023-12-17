@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 mongoose.set("strictQuery", true);
 
 export default function database() {
-    mongoose.connect("mongodb+srv://chuksaginamada:JhQ9FVxbd9gBGluK@cluster0.ela5hrz.mongodb.net/"!)
+    mongoose.connect(process.env.DATABASE_URI!)
         .then(() => {
             console.log("Connection to database has been established successfully");
         })
