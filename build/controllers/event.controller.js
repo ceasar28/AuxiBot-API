@@ -36,9 +36,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const event_model_1 = __importDefault(require("../models/event.model"));
-const node_schedule_1 = __importDefault(require("node-schedule"));
 const yup = __importStar(require("yup"));
 const sendEmails_utils_1 = __importDefault(require("../utils/sendEmails.utils"));
+const node_cron_1 = __importDefault(require("node-cron"));
 class EventController {
     createEvent(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -79,31 +79,32 @@ class EventController {
             const dateParts = req.body.date.split(' - ');
             const formattedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
             const dateTime = new Date(`${formattedDate}T${req.body.time}:00.000Z`);
+            const utcTime = new Date(dateTime.toISOString());
+            const cronExpressionOneDayBefore = `${utcTime.getUTCMinutes()} ${utcTime.getUTCHours()} ${utcTime.getUTCDate() - 1} ${utcTime.getUTCMonth() + 1} *`;
+            const cronExpressionOneHourBefore = `${utcTime.getUTCMinutes()} ${utcTime.getUTCHours() - 1} ${utcTime.getUTCDate()} ${utcTime.getUTCMonth() + 1} *`;
+            console.log(cronExpressionOneDayBefore);
+            console.log(cronExpressionOneHourBefore);
             const { email, title, date, time } = req.body;
             req.body.time = dateTime;
             const createdEvent = yield event_model_1.default.create(req.body);
-            const emailJob1 = node_schedule_1.default.scheduleJob((dateTime.getTime() - 86400000), function () {
-                return __awaiter(this, void 0, void 0, function* () {
-                    try {
-                        yield (0, sendEmails_utils_1.default)(email, "a day", title, date, time);
-                        console.log('Email for one day before sent successfully');
-                    }
-                    catch (error) {
-                        console.error('Error sending email:', error);
-                    }
-                });
-            });
-            const emailJob2 = node_schedule_1.default.scheduleJob((dateTime.getTime() - 3600000), function () {
-                return __awaiter(this, void 0, void 0, function* () {
-                    try {
-                        yield (0, sendEmails_utils_1.default)(email, "one hour", title, date, time);
-                        console.log('Email for one hour before sent successfully');
-                    }
-                    catch (error) {
-                        console.error('Error sending email:', error);
-                    }
-                });
-            });
+            node_cron_1.default.schedule(cronExpressionOneDayBefore, () => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield (0, sendEmails_utils_1.default)(email, "a day", title, date, time);
+                    console.log('Email for one day before sent successfully');
+                }
+                catch (error) {
+                    console.error('Error sending email:', error);
+                }
+            }));
+            node_cron_1.default.schedule(cronExpressionOneHourBefore, () => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield (0, sendEmails_utils_1.default)(email, "one hour", title, date, time);
+                    console.log('Email for one hour before sent successfully');
+                }
+                catch (error) {
+                    console.error('Error sending email:', error);
+                }
+            }));
             const event = yield event_model_1.default.findOne({ _id: createdEvent.id }, "-__v");
             return res.status(201)
                 .send({
