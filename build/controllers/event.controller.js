@@ -107,13 +107,16 @@ class EventController {
             console.log(cronExpressionOneDayBefore);
             console.log(cronExpressionOneHourBefore);
             console.log(cronExpressionTwoMinutesBefore);
-            const { email, title, date, time, additionalInfo } = req.body;
+            const { email, title, date, time, additionalInfo, inviteEmails } = req.body;
             req.body.time = dateTime;
             const createdEvent = yield event_model_1.default.create(req.body);
             node_cron_1.default.schedule(cronExpressionOneDayBefore, () => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    yield (0, sendEmails_utils_1.default)(email, "a day", title, date, time, additionalInfo);
-                    console.log("Email for one day before sent successfully");
+                    // looping through emails
+                    inviteEmails.map((mail) => __awaiter(this, void 0, void 0, function* () {
+                        yield (0, sendEmails_utils_1.default)(mail, "a day", title, date, time, additionalInfo);
+                        console.log("Email for one day before sent successfully");
+                    }));
                 }
                 catch (error) {
                     console.error("Error sending email:", error);
@@ -121,8 +124,11 @@ class EventController {
             }));
             node_cron_1.default.schedule(cronExpressionOneHourBefore, () => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    yield (0, sendEmails_utils_1.default)(email, "one hour", title, date, time, additionalInfo);
-                    console.log("Email for one hour before sent successfully");
+                    // looping through emails
+                    inviteEmails.map((mail) => __awaiter(this, void 0, void 0, function* () {
+                        yield (0, sendEmails_utils_1.default)(mail, "one hour", title, date, time, additionalInfo);
+                        console.log("Email for one hour before sent successfully");
+                    }));
                 }
                 catch (error) {
                     console.error("Error sending email:", error);
@@ -130,8 +136,11 @@ class EventController {
             }));
             node_cron_1.default.schedule(cronExpressionTwoMinutesBefore, () => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    yield (0, sendEmails_utils_1.default)(email, "two minutes", title, date, time, additionalInfo);
-                    console.log("Email for two minutes before sent successfully");
+                    // looping through emails
+                    inviteEmails.map((mail) => __awaiter(this, void 0, void 0, function* () {
+                        yield (0, sendEmails_utils_1.default)(mail, "two minutes", title, date, time, additionalInfo);
+                        console.log("Email for two minutes before sent successfully");
+                    }));
                 }
                 catch (error) {
                     console.error("Error sending email:", error);

@@ -79,37 +79,46 @@ export default class EventController {
     console.log(cronExpressionOneDayBefore);
     console.log(cronExpressionOneHourBefore);
     console.log(cronExpressionTwoMinutesBefore);
-    const { email, title, date, time, additionalInfo } = req.body;
+    const { email, title, date, time, additionalInfo, inviteEmails } = req.body;
     req.body.time = dateTime;
     const createdEvent = await EventModel.create(req.body);
 
     cron.schedule(cronExpressionOneDayBefore, async () => {
       try {
-        await sendEmail(email, "a day", title, date, time, additionalInfo);
-        console.log("Email for one day before sent successfully");
+        // looping through emails
+        inviteEmails.map(async (mail: string) => {
+          await sendEmail(mail, "a day", title, date, time, additionalInfo);
+          console.log("Email for one day before sent successfully");
+        });
       } catch (error) {
         console.error("Error sending email:", error);
       }
     });
     cron.schedule(cronExpressionOneHourBefore, async () => {
       try {
-        await sendEmail(email, "one hour", title, date, time, additionalInfo);
-        console.log("Email for one hour before sent successfully");
+        // looping through emails
+        inviteEmails.map(async (mail: string) => {
+          await sendEmail(mail, "one hour", title, date, time, additionalInfo);
+          console.log("Email for one hour before sent successfully");
+        });
       } catch (error) {
         console.error("Error sending email:", error);
       }
     });
     cron.schedule(cronExpressionTwoMinutesBefore, async () => {
       try {
-        await sendEmail(
-          email,
-          "two minutes",
-          title,
-          date,
-          time,
-          additionalInfo
-        );
-        console.log("Email for two minutes before sent successfully");
+        // looping through emails
+        inviteEmails.map(async (mail: string) => {
+          await sendEmail(
+            mail,
+            "two minutes",
+            title,
+            date,
+            time,
+            additionalInfo
+          );
+          console.log("Email for two minutes before sent successfully");
+        });
       } catch (error) {
         console.error("Error sending email:", error);
       }
