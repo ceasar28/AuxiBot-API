@@ -1,22 +1,29 @@
 import nodemailer from "nodemailer";
 
-export default async function sendEmail(to: string, timing: string, title: string, date: string, time: string) {
-    const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.nodemailer_user,
-            pass: process.env.nodemailer_password
-        },
-    });
+export default async function sendEmail(
+  to: string,
+  timing: string,
+  title: string,
+  date: string,
+  time: string,
+  additionalInfo: string
+) {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.nodemailer_user,
+      pass: process.env.nodemailer_password,
+    },
+  });
 
-    const mailOptions = {
-        from: "Chuks-Aginam Adaobi <chuksaginamada@gmail.com>",
-        to: `${to}`,
-        subject: "Auxibot Reminder",
-        sender: "Auxibot", 
-        html: `<!DOCTYPE html>
+  const mailOptions = {
+    from: "Tech From Root <techfromroot@gmail.com>",
+    to: `${to}`,
+    subject: "Auxibot Reminder",
+    sender: "Auxibot",
+    html: `<!DOCTYPE html>
         <html lang="en">
         <head>
           <meta charset="UTF-8">
@@ -62,9 +69,9 @@ export default async function sendEmail(to: string, timing: string, title: strin
         
             <p><strong>Event Details:</strong></p>
             <ul>
-              <li><strong>Title:</strong> [${title}]</li>
-              <li><strong>Date:</strong> [${date}]</li>
-              <li><strong>Time:</strong> [${time}]</li>
+              <li><strong>Info:</strong> ${additionalInfo}</li>
+              <li><strong>Date:</strong> ${date}</li>
+              <li><strong>Time:</strong> ${time}</li>
             </ul>
         
             <p>We look forward to having you at the event. If you have any questions or need further assistance, please feel free to contact us.</p>
@@ -75,7 +82,7 @@ export default async function sendEmail(to: string, timing: string, title: strin
           </div>
         </body>
         </html>
-        `
-    };
-    await transporter.sendMail(mailOptions);
+        `,
+  };
+  await transporter.sendMail(mailOptions);
 }

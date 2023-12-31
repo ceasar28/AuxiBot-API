@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
-function sendEmail(to, timing, title, date, time) {
+function sendEmail(to, timing, title, date, time, additionalInfo) {
     return __awaiter(this, void 0, void 0, function* () {
         const transporter = nodemailer_1.default.createTransport({
             host: "smtp.gmail.com",
@@ -21,11 +21,11 @@ function sendEmail(to, timing, title, date, time) {
             secure: true,
             auth: {
                 user: process.env.nodemailer_user,
-                pass: process.env.nodemailer_password
+                pass: process.env.nodemailer_password,
             },
         });
         const mailOptions = {
-            from: "Chuks-Aginam Adaobi <chuksaginamada@gmail.com>",
+            from: "Tech From Root <techfromroot@gmail.com>",
             to: `${to}`,
             subject: "Auxibot Reminder",
             sender: "Auxibot",
@@ -75,9 +75,9 @@ function sendEmail(to, timing, title, date, time) {
         
             <p><strong>Event Details:</strong></p>
             <ul>
-              <li><strong>Title:</strong> [${title}]</li>
-              <li><strong>Date:</strong> [${date}]</li>
-              <li><strong>Time:</strong> [${time}]</li>
+              <li><strong>Info:</strong> ${additionalInfo}</li>
+              <li><strong>Date:</strong> ${date}</li>
+              <li><strong>Time:</strong> ${time}</li>
             </ul>
         
             <p>We look forward to having you at the event. If you have any questions or need further assistance, please feel free to contact us.</p>
@@ -88,7 +88,7 @@ function sendEmail(to, timing, title, date, time) {
           </div>
         </body>
         </html>
-        `
+        `,
         };
         yield transporter.sendMail(mailOptions);
     });
